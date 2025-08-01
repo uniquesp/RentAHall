@@ -1,5 +1,6 @@
 package com.rentahall.userservice.controller;
 
+import com.rentahall.userservice.dto.UpdateUserDTO;
 import com.rentahall.userservice.dto.UserDTO;
 import com.rentahall.userservice.entity.User;
 import com.rentahall.userservice.service.UserService;
@@ -16,11 +17,6 @@ public class UserController {
 
     private final UserService userService;
 
-    @PostMapping("/register")
-    public ResponseEntity<UserDTO> register(@RequestBody User user) {
-        return ResponseEntity.ok(userService.register(user));
-    }
-
     @GetMapping("/all")
     public ResponseEntity<List<UserDTO>> all() {
         return ResponseEntity.ok(userService.getAllUsers());
@@ -29,5 +25,20 @@ public class UserController {
     @GetMapping("/email/{email}")
     public ResponseEntity<UserDTO> findByEmail(@PathVariable String email) {
         return ResponseEntity.ok(userService.findByEmail(email));
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
+        return ResponseEntity.ok(userService.getUserById(id));
+    }
+
+    @PutMapping("/{id}/update-profile")
+    public ResponseEntity<UserDTO> updateProfile(@PathVariable Long id, @RequestBody UpdateUserDTO dto) {
+        return ResponseEntity.ok(userService.updateUser(id, dto));
+    }
+
+    @GetMapping("/by-role/{role}")
+    public ResponseEntity<List<UserDTO>> getUsersByRole(@PathVariable String role) {
+        return ResponseEntity.ok(userService.getUsersByRole(User.Role.valueOf(role.toUpperCase())));
     }
 }
