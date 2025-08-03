@@ -9,6 +9,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/api/users")
@@ -28,12 +29,12 @@ public class UserController {
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<UserDTO> getUser(@PathVariable Long id) {
+    public ResponseEntity<UserDTO> getUser(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
     @PutMapping("/{id}/update-profile")
-    public ResponseEntity<UserDTO> updateProfile(@PathVariable Long id, @RequestBody UpdateUserDTO dto) {
+    public ResponseEntity<UserDTO> updateProfile(@PathVariable UUID id, @RequestBody UpdateUserDTO dto) {
         return ResponseEntity.ok(userService.updateUser(id, dto));
     }
 

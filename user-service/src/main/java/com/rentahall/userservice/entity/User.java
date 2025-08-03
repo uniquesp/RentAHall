@@ -4,6 +4,7 @@ import jakarta.persistence.*;
 import lombok.*;
 
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name = "users")
@@ -15,43 +16,34 @@ import java.time.LocalDateTime;
 public class User {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long id;
+    @GeneratedValue
+    @Column(columnDefinition = "BINARY(16)")
+    private UUID id;
 
-    @Column(name = "name")
     private String name;
 
-    @Column(name = "email", unique = true, nullable = false)
+    @Column(unique = true, nullable = false)
     private String email;
 
     @Column(name = "password_hash", nullable = false)
     private String passwordHash;
 
-    @Column(name = "phone")
     private String phone;
 
     @Enumerated(EnumType.STRING)
-    @Column(name = "role")
     private Role role;
 
-    @Column(name = "created_at")
     private LocalDateTime createdAt;
-
-    @Column(name = "updated_at")
     private LocalDateTime updatedAt;
 
-    // Automatically update timestamp before update
+    @PrePersist
+    public void onCreate() {
+        this.createdAt = this.updatedAt = LocalDateTime.now();
+    }
+
     @PreUpdate
     public void onUpdate() {
         this.updatedAt = LocalDateTime.now();
-    }
-
-    // Optional: Set timestamps before insert
-    @PrePersist
-    public void onCreate() {
-        LocalDateTime now = LocalDateTime.now();
-        this.createdAt = now;
-        this.updatedAt = now;
     }
 
     public enum Role {
