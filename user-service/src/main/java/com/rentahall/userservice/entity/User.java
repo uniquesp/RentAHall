@@ -19,7 +19,7 @@ public class User {
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
-    @Column(name = "id", columnDefinition = "VARCHAR(36)")
+    @Column(name = "id", columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
     private UUID id;
 
     private String name;
