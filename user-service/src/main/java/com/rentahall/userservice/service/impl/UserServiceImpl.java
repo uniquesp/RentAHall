@@ -19,16 +19,17 @@ public class UserServiceImpl implements UserService {
 
     private final UserRepository userRepository;
 
-    @Override
-    public UserDTO findByEmail(String email) {
-        return userRepository.findByEmail(email)
-                .map(this::toDTO)
-                .orElse(null);
-    }
-    @Override
-    public List<UserDTO> getAllUsers() {
-        return userRepository.findAll().stream().map(this::toDTO).toList();
-    }
+//    @Override
+//    public UserDTO findByEmail(String email) {
+//        return userRepository.findByEmail(email)
+//                .map(this::toDTO)
+//                .orElse(null);
+//    }
+
+//    @Override
+//    public List<UserDTO> getAllUsers() {
+//        return userRepository.findAll().stream().map(this::toDTO).toList();
+//    }
 
     @Override
     public UserDTO getUserById(UUID id) {
@@ -37,24 +38,24 @@ public class UserServiceImpl implements UserService {
         return toDTO(user);
     }
 
-    @Override
-    public UserDTO updateUser(UUID id, UpdateUserDTO updateDto) {
-        User user = userRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+//    @Override
+//    public UserDTO updateUser(UUID id, UpdateUserDTO updateDto) {
+//        User user = userRepository.findById(id)
+//                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + id));
+//
+//        if (updateDto.getName() != null) user.setName(updateDto.getName());
+//        if (updateDto.getPhone() != null) user.setPhone(updateDto.getPhone());
+//        if (updateDto.getPasswordHash() != null) user.setPasswordHash(updateDto.getPasswordHash());
+//
+//        return toDTO(userRepository.save(user));
+//    }
 
-        if (updateDto.getName() != null) user.setName(updateDto.getName());
-        if (updateDto.getPhone() != null) user.setPhone(updateDto.getPhone());
-        if (updateDto.getPasswordHash() != null) user.setPasswordHash(updateDto.getPasswordHash());
-
-        return toDTO(userRepository.save(user));
-    }
-
-    @Override
-    public List<UserDTO> getUsersByRole(User.Role role) {
-        return userRepository.findByRole(role).stream()
-                .map(this::toDTO)
-                .collect(Collectors.toList());
-    }
+//    @Override
+//    public List<UserDTO> getUsersByRole(User.Role role) {
+//        return userRepository.findByRole(role).stream()
+//                .map(this::toDTO)
+//                .collect(Collectors.toList());
+//    }
 
     private UserDTO toDTO(User user) {
         return UserDTO.builder()

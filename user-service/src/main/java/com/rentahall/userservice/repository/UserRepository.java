@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface UserRepository extends JpaRepository<User, Long> {
-    List<User> findByRole(User.Role role);
-    Optional<User> findByEmail(String email);
-    Optional<User> findById(UUID id);
+public interface UserRepository extends JpaRepository<User, UUID> {
+//    List<User> findByRole(User.Role role);
+//    Optional<User> findByEmail(String email);
+//    Optional<User> findById(UUID id);
 }

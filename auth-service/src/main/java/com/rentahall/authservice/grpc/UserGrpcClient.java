@@ -2,7 +2,6 @@ package com.rentahall.authservice.grpc;
 
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Component;
-
 @Component
 @RequiredArgsConstructor
 public class UserGrpcClient {
@@ -15,9 +14,13 @@ public class UserGrpcClient {
                 .setEmail(email)
                 .setPassword(hashedPassword)
                 .setPhone(phone)
-                .setRole(role)
+                .setRole(role != null ? role : Role.CLIENT)
                 .build();
 
-        return stub.registerUser(request);
+        try {
+            return stub.registerUser(request);
+        } catch (Exception ex) {
+            throw new RuntimeException("Failed to register user via gRPC: " + ex.getMessage(), ex);
+        }
     }
 }

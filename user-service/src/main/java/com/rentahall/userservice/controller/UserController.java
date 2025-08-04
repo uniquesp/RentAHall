@@ -18,28 +18,28 @@ public class UserController {
 
     private final UserService userService;
 
-    @GetMapping("/all")
-    public ResponseEntity<List<UserDTO>> all() {
-        return ResponseEntity.ok(userService.getAllUsers());
-    }
+//    @GetMapping("/all")
+//    public ResponseEntity<List<UserDTO>> all() {
+//        return ResponseEntity.ok(userService.getAllUsers());
+//    }
 
-    @GetMapping("/email/{email}")
-    public ResponseEntity<UserDTO> findByEmail(@PathVariable String email) {
-        return ResponseEntity.ok(userService.findByEmail(email));
-    }
+//    @GetMapping("/email/{email}")
+//    public ResponseEntity<UserDTO> findByEmail(@PathVariable String email) {
+//        return ResponseEntity.ok(userService.findByEmail(email));
+//    }
 
     @GetMapping("/{id}")
     public ResponseEntity<UserDTO> getUser(@PathVariable UUID id) {
         return ResponseEntity.ok(userService.getUserById(id));
     }
 
-    @PutMapping("/{id}/update-profile")
-    public ResponseEntity<UserDTO> updateProfile(@PathVariable UUID id, @RequestBody UpdateUserDTO dto) {
-        return ResponseEntity.ok(userService.updateUser(id, dto));
-    }
-
-    @GetMapping("/by-role/{role}")
-    public ResponseEntity<List<UserDTO>> getUsersByRole(@PathVariable String role) {
-        return ResponseEntity.ok(userService.getUsersByRole(User.Role.valueOf(role.toUpperCase())));
-    }
+//    @PutMapping("/{id}/update-profile")
+//    public ResponseEntity<UserDTO> updateProfile(@PathVariable UUID id, @RequestBody UpdateUserDTO dto) {
+//        return ResponseEntity.ok(userService.updateUser(id, dto));
+//    }
+//
+//    @GetMapping("/by-role/{role}")
+//    public ResponseEntity<List<UserDTO>> getUsersByRole(@PathVariable String role) {
+//        return ResponseEntity.ok(userService.getUsersByRole(User.Role.valueOf(role.toUpperCase())));
+//    }
 }

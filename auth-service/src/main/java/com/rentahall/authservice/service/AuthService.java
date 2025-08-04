@@ -27,7 +27,6 @@ public class AuthService {
                 request.getRole()
         );
 
-        // For now, assume UUID is returned as string in message field
         String userId = response.getMessage();
 
         String token = jwtService.generateToken(
