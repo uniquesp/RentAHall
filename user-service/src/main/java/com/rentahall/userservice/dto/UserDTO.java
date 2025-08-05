@@ -2,10 +2,10 @@ package com.rentahall.userservice.dto;
 
 import lombok.*;
 
+import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Getter @Setter
-@NoArgsConstructor @AllArgsConstructor
+@Data
 @Builder
 public class UserDTO {
     private UUID id;
@@ -13,5 +13,7 @@ public class UserDTO {
     private String email;
     private String phone;
     private String role;
+    private LocalDateTime createdAt;
+    private LocalDateTime updatedAt;
 }
 

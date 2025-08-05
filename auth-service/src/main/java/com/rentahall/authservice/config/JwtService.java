@@ -35,8 +35,6 @@ public class JwtService {
                 .setSubject(userId)
                 .claim("email", email)
                 .claim("role", role)
-                .claim("name", name)
-                .claim("phone", phone)
                 .setIssuedAt(now)
                 .setExpiration(expiry)
                 .signWith(key, SignatureAlgorithm.HS256)
