@@ -1,6 +1,5 @@
 package com.rentahall.userservice.service.impl;
 
-import com.rentahall.userservice.dto.UpdateUserDTO;
 import com.rentahall.userservice.dto.UserDTO;
 import com.rentahall.userservice.entity.User;
 import com.rentahall.userservice.repository.UserRepository;
@@ -95,23 +94,11 @@ public class UserServiceImpl implements UserService {
         }
 
         User user = userOpt.get();
-        // TODO: In production, use proper password hashing
-        // return passwordEncoder.matches(password, user.getPasswordHash());
-
-        // For now, plain text comparison (NOT SECURE - DEVELOPMENT ONLY)
         boolean isValid = password.equals(user.getPasswordHash());
         log.info("Password validation result for {}: {}", email, isValid);
         return isValid;
     }
 
-    @Override
-    @Transactional(readOnly = true)
-    public String getPasswordHashByUserId(UUID userId) {
-        log.info("Getting password hash for user id: {}", userId);
-        User user = userRepository.findById(userId)
-                .orElseThrow(() -> new EntityNotFoundException("User not found with id: " + userId));
-        return user.getPasswordHash();
-    }
 
     private UserDTO toDTO(User user) {
         return UserDTO.builder()

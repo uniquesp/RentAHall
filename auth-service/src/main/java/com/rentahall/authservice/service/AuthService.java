@@ -32,9 +32,7 @@ public class AuthService {
         String token = jwtService.generateToken(
                 userId,
                 request.getEmail(),
-                request.getRole().name(),
-                request.getName(),
-                request.getPhone()
+                request.getRole().name()
         );
 
         return new AuthResponse(token);

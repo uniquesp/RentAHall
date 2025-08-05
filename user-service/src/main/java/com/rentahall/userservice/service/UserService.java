@@ -10,11 +10,16 @@ import java.util.UUID;
 
 public interface UserService {
     UserDTO findByEmail(String email);
+
     List<UserDTO> getAllUsers();
+
     UserDTO getUserById(UUID id);
+
     UserDTO createUser(User user);
+
     List<UserDTO> getUsersByRole(User.Role role);
+
     boolean existsByEmail(String email);
+
     boolean validateUserCredentials(String email, String password);
-    String getPasswordHashByUserId(UUID userId);
 }

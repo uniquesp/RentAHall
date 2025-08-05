@@ -22,27 +22,23 @@ public class UserServiceGrpcImpl extends UserServiceGrpc.UserServiceImplBase {
     @Transactional
     public void registerUser(RegisterUserRequest request, StreamObserver<RegisterUserResponse> responseObserver) {
         try {
-            log.info("=== gRPC: Received RegisterUser Request ===");
-            log.info("Request details - Name: {}, Email: {}, Phone: {}, Role: {}",
-                    request.getName(), request.getEmail(), request.getPhone(), request.getRole());
-
             // Validate request
-            if (request.getName() == null || request.getName().trim().isEmpty()) {
-                log.error("Validation failed: Name is required");
+            request.getName();
+            if (request.getName().trim().isEmpty()) {
                 responseObserver.onError(Status.INVALID_ARGUMENT
                         .withDescription("Name is required").asRuntimeException());
                 return;
             }
 
-            if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
-                log.error("Validation failed: Email is required");
+            request.getEmail();
+            if (request.getEmail().trim().isEmpty()) {
                 responseObserver.onError(Status.INVALID_ARGUMENT
                         .withDescription("Email is required").asRuntimeException());
                 return;
             }
 
-            if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
-                log.error("Validation failed: Password is required");
+            request.getPassword();
+            if (request.getPassword().trim().isEmpty()) {
                 responseObserver.onError(Status.INVALID_ARGUMENT
                         .withDescription("Password is required").asRuntimeException());
                 return;
@@ -50,7 +46,6 @@ public class UserServiceGrpcImpl extends UserServiceGrpc.UserServiceImplBase {
 
             // Check if user already exists
             if (userService.existsByEmail(request.getEmail())) {
-                log.error("User with email {} already exists", request.getEmail());
                 responseObserver.onError(Status.ALREADY_EXISTS
                         .withDescription("User with email already exists").asRuntimeException());
                 return;
@@ -66,49 +61,38 @@ public class UserServiceGrpcImpl extends UserServiceGrpc.UserServiceImplBase {
                     case UNRECOGNIZED -> throw new IllegalArgumentException("Invalid role");
                 };
             } catch (Exception e) {
-                log.error("Invalid role provided: {}", request.getRole());
                 responseObserver.onError(Status.INVALID_ARGUMENT
                         .withDescription("Invalid role").asRuntimeException());
                 return;
             }
 
             // Create User entity
+            request.getPhone();
             User user = User.builder()
                     .name(request.getName().trim())
                     .email(request.getEmail().trim().toLowerCase())
                     .passwordHash(request.getPassword())
-                    .phone(request.getPhone() != null && !request.getPhone().trim().isEmpty() ?
+                    .phone(!request.getPhone().trim().isEmpty() ?
                             request.getPhone().trim() : null)
                     .role(userRole)
                     .build();
 
-            log.info("=== gRPC: Creating User ===");
-            log.info("User entity: {}", user);
-
             // Save user through service layer
             UserDTO savedUserDTO = userService.createUser(user);
-
-            log.info("=== gRPC: User Created Successfully ===");
-            log.info("Saved user ID: {}, Email: {}", savedUserDTO.getId(), savedUserDTO.getEmail());
 
             // Build response
             RegisterUserResponse response = RegisterUserResponse.newBuilder()
                     .setMessage(savedUserDTO.getId().toString())
                     .build();
 
-            log.info("=== gRPC: Sending Response ===");
-            log.info("Response message: {}", response.getMessage());
-
             responseObserver.onNext(response);
             responseObserver.onCompleted();
 
         } catch (IllegalArgumentException ex) {
-            log.error("=== gRPC: Validation Error ===", ex);
             responseObserver.onError(Status.INVALID_ARGUMENT
                     .withDescription(ex.getMessage())
                     .asRuntimeException());
         } catch (Exception ex) {
-            log.error("=== gRPC: Unexpected Error ===", ex);
             responseObserver.onError(Status.INTERNAL
                     .withDescription("Internal server error: " + ex.getMessage())
                     .withCause(ex)
@@ -120,25 +104,22 @@ public class UserServiceGrpcImpl extends UserServiceGrpc.UserServiceImplBase {
     @Transactional(readOnly = true)
     public void validateUser(ValidateUserRequest request, StreamObserver<ValidateUserResponse> responseObserver) {
         try {
-            log.info("=== gRPC: Received ValidateUser Request ===");
-            log.info("Validating user with email: {}", request.getEmail());
-
             // Validate request
-            if (request.getEmail() == null || request.getEmail().trim().isEmpty()) {
-                log.error("Validation failed: Email is required");
+            request.getEmail();
+            if (request.getEmail().trim().isEmpty()) {
                 responseObserver.onError(Status.INVALID_ARGUMENT
                         .withDescription("Email is required").asRuntimeException());
                 return;
             }
 
-            if (request.getPassword() == null || request.getPassword().trim().isEmpty()) {
-                log.error("Validation failed: Password is required");
+            request.getPassword();
+            if (request.getPassword().trim().isEmpty()) {
                 responseObserver.onError(Status.INVALID_ARGUMENT
                         .withDescription("Password is required").asRuntimeException());
                 return;
             }
 
-            // Validate credentials using service layer
+            // Validate credentials using the service layer
             boolean isValid = userService.validateUserCredentials(
                     request.getEmail().trim().toLowerCase(),
                     request.getPassword()
@@ -161,9 +142,6 @@ public class UserServiceGrpcImpl extends UserServiceGrpc.UserServiceImplBase {
                         .setRole(grpcRole)
                         .build();
 
-                log.info("=== gRPC: User Validation SUCCESS ===");
-                log.info("Response - UserId: {}, Role: {}", response.getUserId(), response.getRole());
-
                 responseObserver.onNext(response);
                 responseObserver.onCompleted();
             } else {
@@ -171,16 +149,14 @@ public class UserServiceGrpcImpl extends UserServiceGrpc.UserServiceImplBase {
                 ValidateUserResponse response = ValidateUserResponse.newBuilder()
                         .setValid(false)
                         .setUserId("")
-                        .setRole(Role.CLIENT) // Default role
+                        .setRole(Role.CLIENT)
                         .build();
 
-                log.info("=== gRPC: User Validation FAILED ===");
                 responseObserver.onNext(response);
                 responseObserver.onCompleted();
             }
 
         } catch (Exception ex) {
-            log.error("=== gRPC: Validation Error ===", ex);
             responseObserver.onError(Status.INTERNAL
                     .withDescription("Internal server error during validation")
                     .withCause(ex)
