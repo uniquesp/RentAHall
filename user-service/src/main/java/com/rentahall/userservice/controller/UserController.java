@@ -1,6 +1,5 @@
 package com.rentahall.userservice.controller;
 
-import com.rentahall.userservice.dto.UpdateUserDTO;
 import com.rentahall.userservice.dto.UserDTO;
 import com.rentahall.userservice.entity.User;
 import com.rentahall.userservice.service.UserService;

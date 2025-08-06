@@ -1,6 +1,7 @@
 package com.rentahall.authservice.controller;
 
 import com.rentahall.authservice.dto.AuthResponse;
+import com.rentahall.authservice.dto.LoginRequestDTO;
 import com.rentahall.authservice.dto.RegisterRequest;
 import com.rentahall.authservice.service.AuthService;
 import jakarta.validation.Valid;
@@ -20,5 +21,10 @@ public class AuthController {
     @PostMapping("/register")
     public AuthResponse register(@Valid @RequestBody RegisterRequest request) {
         return authService.register(request);
+    }
+
+    @PostMapping("/login")
+    public AuthResponse login(@Valid @RequestBody LoginRequestDTO request) {
+        return authService.login(request);
     }
 }

@@ -52,6 +52,7 @@ public class User {
     public enum Role {
         OWNER, CLIENT, ADMIN
     }
+
     @Override
     public String toString() {
         return "User{" +

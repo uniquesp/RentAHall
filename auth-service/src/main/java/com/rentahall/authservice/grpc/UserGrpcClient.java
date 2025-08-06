@@ -48,4 +48,47 @@ public class UserGrpcClient {
             throw new RuntimeException("Failed to register user: " + ex.getMessage(), ex);
         }
     }
+
+    public ValidateUserResponse validateUser(String email, String plainPassword) {
+        try {
+            // Build validation request - send plain password to User Service
+            // User Service will handle bcrypt comparison with stored hash
+            ValidateUserRequest request = ValidateUserRequest.newBuilder()
+                    .setEmail(email)
+                    .setPassword(plainPassword) // Send plain password
+                    .build();
+
+            System.out.println("=== DEBUG: Validating User ===");
+            System.out.println("Email: " + email);
+            System.out.println("Plain password provided: " + !plainPassword.isEmpty());
+
+            // Call gRPC service - User Service will compare plain password with stored hash
+            ValidateUserResponse response = stub.validateUser(request);
+
+            System.out.println("=== DEBUG: Validation Response ===");
+            System.out.println("Valid: " + response.getValid());
+            System.out.println("UserId: " + response.getUserId());
+            System.out.println("Role: " + response.getRole());
+
+            return response;
+
+        } catch (StatusRuntimeException ex) {
+            System.err.println("=== DEBUG: gRPC Status Exception ===");
+            System.err.println("Status: " + ex.getStatus());
+            System.err.println("Description: " + ex.getStatus().getDescription());
+            if (ex.getTrailers() != null) {
+                System.err.println("Trailers: " + ex.getTrailers());
+            } else {
+                System.err.println("Trailers: NULL");
+            }
+            throw new RuntimeException("gRPC validation call failed: " + ex.getStatus(), ex);
+
+        } catch (Exception ex) {
+            System.err.println("=== DEBUG: Unexpected Exception in validateUser ===");
+            System.err.println("Exception type: " + ex.getClass().getSimpleName());
+            System.err.println("Message: " + ex.getMessage());
+            ex.printStackTrace();
+            throw new RuntimeException("Failed to validate user: " + ex.getMessage(), ex);
+        }
+    }
 }

@@ -2,6 +2,7 @@ package com.rentahall.authservice.service;
 
 import com.rentahall.authservice.config.JwtService;
 import com.rentahall.authservice.dto.AuthResponse;
+import com.rentahall.authservice.dto.LoginRequestDTO;
 import com.rentahall.authservice.dto.RegisterRequest;
 import com.rentahall.authservice.grpc.UserGrpcClient;
 import lombok.RequiredArgsConstructor;
@@ -36,5 +37,24 @@ public class AuthService {
         );
 
         return new AuthResponse(token);
+    }
+
+    public AuthResponse login(LoginRequestDTO request) {
+        var response = userGrpcClient.validateUser(
+                request.getEmail(),
+                request.getPassword()
+        );
+
+        if (!response.getValid()) {
+            throw new RuntimeException("Invalid email or password");
+        }
+
+        String jwtToken = jwtService.generateToken(
+                response.getUserId(),
+                request.getEmail(),
+                response.getRole().name()
+        );
+
+        return new AuthResponse(jwtToken);
     }
 }
