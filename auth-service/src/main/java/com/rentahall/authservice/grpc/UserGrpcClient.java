@@ -51,25 +51,15 @@ public class UserGrpcClient {
 
     public ValidateUserResponse validateUser(String email, String plainPassword) {
         try {
-            // Build validation request - send plain password to User Service
+            // Build validation request - send plain password to
             // User Service will handle bcrypt comparison with stored hash
             ValidateUserRequest request = ValidateUserRequest.newBuilder()
                     .setEmail(email)
                     .setPassword(plainPassword) // Send plain password
                     .build();
 
-            System.out.println("=== DEBUG: Validating User ===");
-            System.out.println("Email: " + email);
-            System.out.println("Plain password provided: " + !plainPassword.isEmpty());
-
             // Call gRPC service - User Service will compare plain password with stored hash
             ValidateUserResponse response = stub.validateUser(request);
-
-            System.out.println("=== DEBUG: Validation Response ===");
-            System.out.println("Valid: " + response.getValid());
-            System.out.println("UserId: " + response.getUserId());
-            System.out.println("Role: " + response.getRole());
-
             return response;
 
         } catch (StatusRuntimeException ex) {
