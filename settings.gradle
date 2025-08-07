@@ -1,2 +1,2 @@
 rootProject.name = 'rentahall'
-include 'user-service'
+include 'event-service'
