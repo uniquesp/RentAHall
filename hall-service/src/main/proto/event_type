@@ -1,0 +1,18 @@
+syntax = "proto3";
+
+package eventtype;
+
+service EventTypeService {
+  rpc GetAllEventTypes (Empty) returns (EventTypeList);
+}
+
+message Empty {}
+
+message EventType {
+  string id = 1;
+  string name = 2;
+}
+
+message EventTypeList {
+  repeated EventType eventTypes = 1;
+}
