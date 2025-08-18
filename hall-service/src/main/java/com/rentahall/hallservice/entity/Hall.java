@@ -22,10 +22,12 @@ public class Hall {
     @Column(name = "id", columnDefinition = "VARCHAR(36)", updatable = false, nullable = false)
     private UUID id;
 
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @Column(name = "owner_id", nullable = false)
     private UUID ownerId;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @JoinColumn(name = "address_id", nullable = false)
     private Address address;
 

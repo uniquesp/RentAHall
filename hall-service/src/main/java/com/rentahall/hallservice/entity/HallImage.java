@@ -21,6 +21,7 @@ public class HallImage {
     private UUID id;
 
     @ManyToOne(fetch = FetchType.LAZY)
+    @JdbcTypeCode(SqlTypes.VARCHAR)
     @JoinColumn(name = "hall_id", nullable = false)
     private Hall hall;
 

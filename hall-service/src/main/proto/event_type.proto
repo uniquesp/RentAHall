@@ -1,0 +1,20 @@
+syntax = "proto3";
+
+import "google/protobuf/empty.proto";
+
+option java_multiple_files = true;
+option java_package = "com.rentahall.eventtype.grpc";
+option java_outer_classname = "EventTypeProto";
+
+service EventTypeService {
+  rpc GetAllEventTypes (google.protobuf.Empty) returns (EventTypeList);
+}
+
+message EventType {
+  string id = 1;
+  string name = 2;
+}
+
+message EventTypeList {
+  repeated EventType eventTypes = 1;
+}

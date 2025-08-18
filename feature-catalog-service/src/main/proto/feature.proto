@@ -3,7 +3,7 @@ syntax = "proto3";
 import "google/protobuf/empty.proto";
 
 option java_multiple_files = true;
-option java_package = "com.rentahall.feature.grpc";
+option java_package = "com.rentahall.featurecatlogservice.grpc";
 option java_outer_classname = "FeatureProto";
 
 service FeatureService {
