@@ -1,29 +1,32 @@
 package com.rentahall.hallservice.controller;
 
-import com.rentahall.eventtype.grpc.EventTypeList;
-import com.rentahall.hallservice.dto.EventResponse;
-import com.rentahall.hallservice.service.impl.HallServiceTry;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import com.rentahall.hallservice.dto.HallRegistrationRequest;
+import com.rentahall.hallservice.dto.HallRegistrationResponse;
+import com.rentahall.hallservice.service.impl.HallServiceImpl;
+import lombok.RequiredArgsConstructor;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.UUID;
 
 @RestController
-@RequestMapping("/halls")
+@RequestMapping("/api/halls")
+@RequiredArgsConstructor
 public class HallController {
 
-    private final HallServiceTry hallService;
+    private final HallServiceImpl service;
 
-    public HallController(HallServiceTry hallService) {
-        this.hallService = hallService;
+    @PostMapping
+    public ResponseEntity<HallRegistrationResponse> registerHall(
+            @RequestBody HallRegistrationRequest request
+    ) {
+        HallRegistrationResponse response = service.createHall(request);
+        return ResponseEntity.ok(response);
     }
 
-    @GetMapping("/event-types")
-    public List<EventResponse> getEventTypes() {
-        return hallService.getAllEventTypes().getEventTypesList().stream()
-                .map(et -> new EventResponse(UUID.fromString(et.getId()), et.getName()))
-                .toList();
+    @GetMapping
+    public List<HallRegistrationResponse> getAllHalls() {
+        return service.getAllHalls();
     }
+
 }

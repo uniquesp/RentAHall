@@ -15,16 +15,6 @@ public class HallRegistrationRequest {
     private Integer capacity;
     private BigDecimal avgPrice;
 
-    // Address
-    private String street;
-    private String city;
-    private String state;
-    private String pincode;
-    private String country;
-
-    private List<String> imageUrls;
-
-    // Features & Event Types
-    private List<UUID> featureIds;
+    private AddressRequest address;
     private List<UUID> eventTypeIds;
 }

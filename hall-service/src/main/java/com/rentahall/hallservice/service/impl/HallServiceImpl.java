@@ -2,60 +2,94 @@ package com.rentahall.hallservice.service.impl;
 
 import com.rentahall.hallservice.dto.HallRegistrationRequest;
 import com.rentahall.hallservice.dto.HallRegistrationResponse;
-import com.rentahall.hallservice.entity.Address;
-import com.rentahall.hallservice.entity.Hall;
-import com.rentahall.hallservice.entity.HallImage;
+import com.rentahall.hallservice.entity.*;
 import com.rentahall.hallservice.repository.AddressRepository;
-import com.rentahall.hallservice.repository.HallImageRepository;
+import com.rentahall.hallservice.repository.HallEventMappingRepository;
 import com.rentahall.hallservice.repository.HallRepository;
 import com.rentahall.hallservice.service.HallService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.util.*;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class HallServiceImpl implements HallService {
 
-    private final HallRepository hallRepository;
     private final AddressRepository addressRepository;
-    private final HallImageRepository hallImageRepository;
+    private final HallRepository hallRepository;
+    private final HallEventMappingRepository hallEventMappingRepository;
 
     @Transactional
-    public HallRegistrationResponse registerHall(HallRegistrationRequest request) {
+    public HallRegistrationResponse createHall(HallRegistrationRequest request) {
+        // 1️ Save Address first
         Address address = Address.builder()
-                .street(request.getStreet())
-                .city(request.getCity())
-                .state(request.getState())
-                .pincode(request.getPincode())
-                .country(request.getCountry())
+                .street(request.getAddress().getStreet())
+                .city(request.getAddress().getCity())
+                .state(request.getAddress().getState())
+                .pincode(request.getAddress().getPincode())
+                .country(request.getAddress().getCountry())
                 .build();
-        addressRepository.save(address);
+        address = addressRepository.save(address);
 
+        // 2️ Save Hall with reference to Address
         Hall hall = Hall.builder()
                 .ownerId(request.getOwnerId())
-                .address(address)
                 .name(request.getName())
                 .description(request.getDescription())
                 .capacity(request.getCapacity())
                 .avgPrice(request.getAvgPrice())
+                .address(address)
                 .build();
-        hallRepository.save(hall);
+        final Hall savedHall = hallRepository.save(hall);
 
-        // Save hall images if provided
-        if (request.getImageUrls() != null && !request.getImageUrls().isEmpty()) {
-            request.getImageUrls().forEach(url -> {
-                HallImage image = HallImage.builder()
-                        .hall(hall)
-                        .imageUrl(url)
-                        .build();
-                hallImageRepository.save(image);
-            });
-        }
+        // 3. Save mappings
+        List<HallEventMapping> mappings = request.getEventTypeIds().stream()
+                .map(eventId -> HallEventMapping.builder()
+                        .id(new HallEventId(savedHall.getId(), eventId))
+                        .hall(savedHall)
+                        .build())
+                .toList();
 
+        hallEventMappingRepository.saveAll(mappings);
+
+        // 4. Build response
         return HallRegistrationResponse.builder()
-                .hallId(hall.getId())
-                .message("Hall registered successfully")
+                .id(hall.getId())
+                .ownerId(hall.getOwnerId())
+                .name(hall.getName())
+                .description(hall.getDescription())
+                .capacity(hall.getCapacity())
+                .avgPrice(hall.getAvgPrice())
+                .eventIds(request.getEventTypeIds())  // here also fix name
                 .build();
     }
+
+    public List<HallRegistrationResponse> getAllHalls() {
+        List<Hall> halls = hallRepository.findAll();
+
+        return halls.stream().map(hall -> {
+            // fetch related event IDs from mapping table
+            List<UUID> eventIds = hallEventMappingRepository.findAll().stream()
+                    .filter(mapping -> mapping.getId().getHallId().equals(hall.getId()))
+                    .map(mapping -> mapping.getId().getEventTypeId())
+                    .toList();
+
+            return HallRegistrationResponse.builder()
+                    .id(hall.getId())
+                    .ownerId(hall.getOwnerId())
+                    .name(hall.getName())
+                    .description(hall.getDescription())
+                    .capacity(hall.getCapacity())
+                    .avgPrice(hall.getAvgPrice())
+                    .eventIds(eventIds)
+                    .build();
+        }).toList();
+    }
 }
+
+
+
+
