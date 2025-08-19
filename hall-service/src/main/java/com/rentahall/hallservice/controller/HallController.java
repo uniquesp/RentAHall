@@ -2,6 +2,7 @@ package com.rentahall.hallservice.controller;
 
 import com.rentahall.hallservice.dto.HallRegistrationRequest;
 import com.rentahall.hallservice.dto.HallRegistrationResponse;
+import com.rentahall.hallservice.service.HallService;
 import com.rentahall.hallservice.service.impl.HallServiceImpl;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -14,7 +15,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class HallController {
 
-    private final HallServiceImpl service;
+    private final HallService service;
 
     @PostMapping
     public ResponseEntity<HallRegistrationResponse> registerHall(

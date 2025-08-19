@@ -23,6 +23,7 @@ public class HallServiceImpl implements HallService {
     private final HallEventMappingRepository hallEventMappingRepository;
 
     @Transactional
+    @Override
     public HallRegistrationResponse createHall(HallRegistrationRequest request) {
         // 1️ Save Address first
         Address address = Address.builder()
@@ -67,6 +68,7 @@ public class HallServiceImpl implements HallService {
                 .build();
     }
 
+    @Override
     public List<HallRegistrationResponse> getAllHalls() {
         List<Hall> halls = hallRepository.findAll();
 
