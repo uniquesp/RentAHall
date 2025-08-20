@@ -3,6 +3,7 @@ package com.rentahall.hallservice.dto;
 import lombok.*;
 
 import java.math.BigDecimal;
+import java.util.Arrays;
 import java.util.List;
 import java.util.UUID;
 
@@ -17,4 +18,5 @@ public class HallRegistrationRequest {
 
     private AddressRequest address;
     private List<UUID> eventTypeIds;
+    private List<UUID> featureTypeIds;
 }

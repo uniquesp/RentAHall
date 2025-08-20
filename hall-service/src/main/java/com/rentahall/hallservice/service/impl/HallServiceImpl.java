@@ -1,6 +1,7 @@
 package com.rentahall.hallservice.service.impl;
 
 import com.rentahall.feature.grpc.Feature;
+import com.rentahall.feature.grpc.FeatureId;
 import com.rentahall.feature.grpc.FeatureList;
 import com.rentahall.hallservice.client.FeatureCatlogGrpcClient;
 import com.rentahall.hallservice.dto.HallRegistrationRequest;
@@ -8,6 +9,7 @@ import com.rentahall.hallservice.dto.HallRegistrationResponse;
 import com.rentahall.hallservice.entity.*;
 import com.rentahall.hallservice.repository.AddressRepository;
 import com.rentahall.hallservice.repository.HallEventMappingRepository;
+import com.rentahall.hallservice.repository.HallFeatureMappingRepository;
 import com.rentahall.hallservice.repository.HallRepository;
 import com.rentahall.hallservice.service.HallService;
 import lombok.RequiredArgsConstructor;
@@ -24,6 +26,7 @@ public class HallServiceImpl implements HallService {
     private final AddressRepository addressRepository;
     private final HallRepository hallRepository;
     private final HallEventMappingRepository hallEventMappingRepository;
+    private final HallFeatureMappingRepository hallFeatureMappingRepository;
 
     @Transactional
     @Override
@@ -56,8 +59,17 @@ public class HallServiceImpl implements HallService {
                         .hall(savedHall)
                         .build())
                 .toList();
-
         hallEventMappingRepository.saveAll(mappings);
+
+        // 4. Save feature mappings
+        List<HallFeatureMapping> featureMappings = request.getFeatureTypeIds().stream()
+                .map(featureId -> HallFeatureMapping.builder()
+                        .id(new HallFeatureId(savedHall.getId(), featureId))
+                        .hall(savedHall)
+                        .build())
+                .toList();
+        hallFeatureMappingRepository.saveAll(featureMappings);
+
 
         // 4. Build response
         return HallRegistrationResponse.builder()
@@ -68,6 +80,7 @@ public class HallServiceImpl implements HallService {
                 .capacity(hall.getCapacity())
                 .avgPrice(hall.getAvgPrice())
                 .eventIds(request.getEventTypeIds())
+                .featureIds(request.getFeatureTypeIds())
                 .build();
     }
 
@@ -82,6 +95,11 @@ public class HallServiceImpl implements HallService {
                     .map(mapping -> mapping.getId().getEventTypeId())
                     .toList();
 
+            List<UUID> featureIds = hallFeatureMappingRepository.findAll().stream()
+                    .filter(hallFeatureMapping -> hallFeatureMapping.getId().getHallId().equals(hall.getId()))
+                    .map(hallFeatureMapping -> hallFeatureMapping.getId().getFeatureId())
+                    .toList();
+
             return HallRegistrationResponse.builder()
                     .id(hall.getId())
                     .ownerId(hall.getOwnerId())
@@ -90,6 +108,7 @@ public class HallServiceImpl implements HallService {
                     .capacity(hall.getCapacity())
                     .avgPrice(hall.getAvgPrice())
                     .eventIds(eventIds)
+                    .featureIds(featureIds)
                     .build();
         }).toList();
     }

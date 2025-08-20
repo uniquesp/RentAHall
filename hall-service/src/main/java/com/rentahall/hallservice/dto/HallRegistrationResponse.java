@@ -17,4 +17,5 @@ public class HallRegistrationResponse {
     private BigDecimal avgPrice;
 
     private List<UUID> eventIds;
+    private List<UUID> featureIds;
 }
