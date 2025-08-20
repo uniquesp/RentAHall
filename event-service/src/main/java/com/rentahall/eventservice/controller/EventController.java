@@ -2,7 +2,6 @@ package com.rentahall.eventservice.controller;
 
 import com.rentahall.eventservice.dto.EventRequest;
 import com.rentahall.eventservice.dto.EventResponse;
-import com.rentahall.eventservice.entity.Event;
 import com.rentahall.eventservice.service.EventService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;

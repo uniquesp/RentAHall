@@ -2,7 +2,6 @@ package com.rentahall.eventservice.service;
 
 import com.rentahall.eventservice.dto.EventRequest;
 import com.rentahall.eventservice.dto.EventResponse;
-import com.rentahall.eventservice.entity.Event;
 
 import java.util.List;
 import java.util.UUID;
