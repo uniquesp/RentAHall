@@ -14,7 +14,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @Builder
-public class Feature {
+public class FeatureEntity {
 
     @Id
     @GeneratedValue(generator = "UUID")
@@ -25,3 +25,4 @@ public class Feature {
     private String name;
 
 }
+

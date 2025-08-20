@@ -1,5 +1,8 @@
 package com.rentahall.hallservice.service.impl;
 
+import com.rentahall.feature.grpc.Feature;
+import com.rentahall.feature.grpc.FeatureList;
+import com.rentahall.hallservice.client.FeatureCatlogGrpcClient;
 import com.rentahall.hallservice.dto.HallRegistrationRequest;
 import com.rentahall.hallservice.dto.HallRegistrationResponse;
 import com.rentahall.hallservice.entity.*;
@@ -64,7 +67,7 @@ public class HallServiceImpl implements HallService {
                 .description(hall.getDescription())
                 .capacity(hall.getCapacity())
                 .avgPrice(hall.getAvgPrice())
-                .eventIds(request.getEventTypeIds())  // here also fix name
+                .eventIds(request.getEventTypeIds())
                 .build();
     }
 

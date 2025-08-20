@@ -18,9 +18,7 @@ public class HallController {
     private final HallService service;
 
     @PostMapping
-    public ResponseEntity<HallRegistrationResponse> registerHall(
-            @RequestBody HallRegistrationRequest request
-    ) {
+    public ResponseEntity<HallRegistrationResponse> registerHall(@RequestBody HallRegistrationRequest request) {
         HallRegistrationResponse response = service.createHall(request);
         return ResponseEntity.ok(response);
     }
