@@ -1,6 +1,7 @@
 package com.rentahall.hallservice.dto;
 
 import lombok.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.math.BigDecimal;
 import java.util.Arrays;
@@ -19,4 +20,6 @@ public class HallRegistrationRequest {
     private AddressRequest address;
     private List<UUID> eventTypeIds;
     private List<UUID> featureTypeIds;
+
+    private List<MultipartFile> images;
 }

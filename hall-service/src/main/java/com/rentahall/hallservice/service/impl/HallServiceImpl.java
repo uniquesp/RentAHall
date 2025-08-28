@@ -7,14 +7,12 @@ import com.rentahall.hallservice.client.FeatureCatlogGrpcClient;
 import com.rentahall.hallservice.dto.HallRegistrationRequest;
 import com.rentahall.hallservice.dto.HallRegistrationResponse;
 import com.rentahall.hallservice.entity.*;
-import com.rentahall.hallservice.repository.AddressRepository;
-import com.rentahall.hallservice.repository.HallEventMappingRepository;
-import com.rentahall.hallservice.repository.HallFeatureMappingRepository;
-import com.rentahall.hallservice.repository.HallRepository;
+import com.rentahall.hallservice.repository.*;
 import com.rentahall.hallservice.service.HallService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.*;
 import java.util.stream.Collectors;
@@ -27,10 +25,12 @@ public class HallServiceImpl implements HallService {
     private final HallRepository hallRepository;
     private final HallEventMappingRepository hallEventMappingRepository;
     private final HallFeatureMappingRepository hallFeatureMappingRepository;
+    private final MinioService minioService;
+    private final HallImageRepository hallImageRepository;
 
     @Transactional
     @Override
-    public HallRegistrationResponse createHall(HallRegistrationRequest request) {
+    public HallRegistrationResponse createHall(HallRegistrationRequest request, List<MultipartFile> images) {
         // 1️ Save Address first
         Address address = Address.builder()
                 .street(request.getAddress().getStreet())
@@ -71,7 +71,23 @@ public class HallServiceImpl implements HallService {
         hallFeatureMappingRepository.saveAll(featureMappings);
 
 
-        // 4. Build response
+        // 5. Save images with manually generated UUID
+        List<HallImage> hallImages = new ArrayList<>();
+        if (images != null) {
+            for (MultipartFile file : images) {
+                UUID imageId = UUID.randomUUID();  // controlled manually
+                String url = minioService.uploadHallImage(file, hall.getId(), imageId);
+
+                hallImages.add(HallImage.builder()
+                        .id(imageId)
+                        .hall(hall)
+                        .imageUrl(url)
+                        .build());
+            }
+            hallImageRepository.saveAll(hallImages);
+        }
+
+        // 6. Build response
         return HallRegistrationResponse.builder()
                 .id(hall.getId())
                 .ownerId(hall.getOwnerId())
@@ -79,6 +95,7 @@ public class HallServiceImpl implements HallService {
                 .description(hall.getDescription())
                 .capacity(hall.getCapacity())
                 .avgPrice(hall.getAvgPrice())
+                .imageUrls(hallImages.stream().map(HallImage::getImageUrl).toList())
                 .eventIds(request.getEventTypeIds())
                 .featureIds(request.getFeatureTypeIds())
                 .build();

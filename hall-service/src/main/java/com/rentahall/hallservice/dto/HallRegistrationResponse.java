@@ -18,4 +18,6 @@ public class HallRegistrationResponse {
 
     private List<UUID> eventIds;
     private List<UUID> featureIds;
+
+    private List<String> imageUrls;
 }
