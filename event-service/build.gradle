@@ -35,6 +35,9 @@ dependencies {
 	implementation 'org.springframework.boot:spring-boot-starter-web'
 	implementation 'io.grpc:grpc-services'
 	implementation 'org.springframework.grpc:spring-grpc-server-web-spring-boot-starter'
+	implementation 'org.springframework.boot:spring-boot-starter-actuator'
+	implementation 'io.micrometer:micrometer-registry-prometheus'      // Prometheus metrics
+	implementation 'net.logstash.logback:logstash-logback-encoder:7.4' // JSON logs + MDC
 	compileOnly 'org.projectlombok:lombok'
 	developmentOnly 'org.springframework.boot:spring-boot-devtools'
 	runtimeOnly 'com.mysql:mysql-connector-j'
@@ -71,4 +74,21 @@ protobuf {
 
 tasks.named('test') {
 	useJUnitPlatform()
+}
+
+tasks.named('bootRun') {
+	doFirst {
+		// Use root project, not service folder
+		def agentPath = new File(rootProject.projectDir, "otel/opentelemetry-javaagent.jar").absolutePath
+		println "Using OTel agent from: ${agentPath}"
+		jvmArgs = [
+				"-javaagent:${agentPath}",
+				"-Dotel.service.name=event-service",
+				"-Dotel.exporter.otlp.endpoint=http://localhost:4318",
+				"-Dotel.exporter.otlp.protocol=http/protobuf",
+				"-Dotel.metrics.exporter=otlp",
+				"-Dotel.traces.sampler=parentbased_always_on",
+				"-Dotel.resource.attributes=service.namespace=rentahall,service.version=dev"
+		]
+	}
 }

@@ -1,0 +1,31 @@
+<configuration>
+    <springProperty name="APP_NAME" source="spring.application.name" defaultValue="unknown"/>
+    <appender name="CONSOLE" class="ch.qos.logback.core.ConsoleAppender">
+        <encoder class="net.logstash.logback.encoder.LoggingEventCompositeJsonEncoder">
+            <providers>
+                <timestamp/>
+                <pattern>
+                    <pattern>
+                        {
+                        "timestamp":"%date{ISO8601}",
+                        "service":"${APP_NAME}",
+                        "level":"%level",
+                        "thread":"%thread",
+                        "logger":"%logger{36}",
+                        "message":"%message",
+                        "trace_id":"%X{trace_id:-}",
+                        "span_id":"%X{span_id:-}"
+                        }
+                    </pattern>
+                </pattern>
+                <mdc/>
+                <arguments/>
+                <stackTrace/>
+            </providers>
+        </encoder>
+    </appender>
+
+    <root level="INFO">
+        <appender-ref ref="CONSOLE"/>
+    </root>
+</configuration>
