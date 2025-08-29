@@ -1,4 +1,6 @@
 rootProject.name = 'rentahall'
+include 'user-service'
+include 'auth-service'
 include 'hall-service'
 include 'feature-catalog-service'
 include 'event-service'

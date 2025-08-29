@@ -1,0 +1,39 @@
+syntax = "proto3";
+
+option java_multiple_files = true;
+option java_package = "com.rentahall.authservice.grpc";
+option java_outer_classname = "UserProto";
+
+service UserService {
+    rpc RegisterUser (RegisterUserRequest) returns (RegisterUserResponse);
+    rpc ValidateUser (ValidateUserRequest) returns (ValidateUserResponse);
+}
+
+message RegisterUserRequest {
+    string name = 1;
+    string email = 2;
+    string password = 3;
+    string phone = 4;
+    Role role = 5;
+}
+
+message RegisterUserResponse {
+    string message = 1;
+}
+
+message ValidateUserRequest {
+    string email = 1;
+    string password = 2;
+}
+
+message ValidateUserResponse {
+    bool valid = 1;
+    string userId = 2;
+    Role role = 3;
+}
+
+enum Role {
+    OWNER = 0;
+    CLIENT = 1;
+    ADMIN = 2;
+}
